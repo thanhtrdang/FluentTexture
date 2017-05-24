@@ -1,4 +1,5 @@
 PODS:
+  - Hero (0.3.6)
   - PINCache (3.0.1-beta.4):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.4)
     - PINCache/Core (= 3.0.1-beta.4)
@@ -21,16 +22,21 @@ PODS:
     - PINRemoteImage/iOS (= 3.0.0-beta.9)
     - PINRemoteImage/PINCache
     - Texture/Core
+  - Then (2.1.0)
 
 DEPENDENCIES:
+  - Hero
   - Texture
+  - Then
 
 SPEC CHECKSUMS:
+  Hero: d3c6f4dd80cdcdbb339be64e57ae3b5c3ab9938c
   PINCache: a89c8f609232afac77128557bd12c861844423d7
   PINOperation: ac23db44796d4a564ecf9b5ea7163510f579b71d
   PINRemoteImage: e4e02e15a6f96cedbcef2abf1c9c1228dc9897d7
   Texture: 18664254419f35de27af76399b3b265cbad5740a
+  Then: 8496793c8fcac95482b943909b440724c7d8d82c
 
-PODFILE CHECKSUM: 440437d03396410c0d94377ffc934d7edb7cebb0
+PODFILE CHECKSUM: 345cbde99fed7a4028a340c1c0925a2c8832984d
 
 COCOAPODS: 1.2.1
