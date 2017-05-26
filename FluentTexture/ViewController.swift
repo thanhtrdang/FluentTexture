@@ -136,11 +136,11 @@ class HeroNode: ASDisplayNode {
 class Hero1Node: HeroNode {
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         blueNode.style
-            .preferredSize(CGSize(width: 80, height: 80))
+            .preferredSize(width: 80, height: 80)
         purpleNode.style
-            .preferredSize(CGSize(width: 120, height: 80))
+            .preferredSize(width: 120, height: 80)
         greenNode.style
-            .preferredSize(CGSize(width: 80, height: 80))
+            .preferredSize(width: 80, height: 80)
         
         let stackLayoutSpec = ASStackLayoutSpec
             .horizontal()
@@ -159,11 +159,11 @@ class Hero1Node: HeroNode {
 class Hero2Node: HeroNode {
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         blueNode.style
-            .preferredSize(CGSize(width: 140, height: 80))
+            .preferredSize(width: 140, height: 80)
         purpleNode.style
-            .preferredSize(CGSize(width: 140, height: 80))
+            .preferredSize(width: 140, height: 80)
         greenNode.style
-            .preferredSize(CGSize(width: 140, height: 80))
+            .preferredSize(width: 140, height: 80)
         
         let stackLayoutSpec = ASStackLayoutSpec
             .vertical()
@@ -171,7 +171,8 @@ class Hero2Node: HeroNode {
             .children(blueNode, purpleNode, greenNode)
         
         let insetLayoutSpec = ASInsetLayoutSpec
-            .insets(UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0))
+            .insets(left: 50)
+            .insets(.zero)
             .child(stackLayoutSpec)
         
         let centerLayoutSpec = ASCenterLayoutSpec

@@ -48,13 +48,30 @@ extension ASLayoutElementStyle {
         return self
     }
     @discardableResult
+    public func preferredSize(width: CGFloat, height: CGFloat) -> Self {
+        self.preferredSize = CGSize(width: width, height: height)
+        return self
+    }
+    
+    @discardableResult
     public func minSize(_ minSize: CGSize) -> Self {
         self.minSize = minSize
         return self
     }
     @discardableResult
+    public func minSize(width: CGFloat, height: CGFloat) -> Self {
+        self.minSize = CGSize(width: width, height: height)
+        return self
+    }
+
+    @discardableResult
     public func maxSize(_ maxSize: CGSize) -> Self {
         self.maxSize = maxSize
+        return self
+    }
+    @discardableResult
+    public func maxSize(width: CGFloat, height: CGFloat) -> Self {
+        self.maxSize = CGSize(width: width, height: height)
         return self
     }
 
@@ -65,13 +82,30 @@ extension ASLayoutElementStyle {
         return self
     }
     @discardableResult
+    public func preferredLayoutSize(width: ASDimension, height: ASDimension) -> Self {
+        self.preferredLayoutSize = ASLayoutSize(width: width, height: height)
+        return self
+    }
+
+    @discardableResult
     public func minLayoutSize(_ minLayoutSize: ASLayoutSize) -> Self {
         self.minLayoutSize = minLayoutSize
         return self
     }
     @discardableResult
+    public func minLayoutSize(width: ASDimension, height: ASDimension) -> Self {
+        self.minLayoutSize = ASLayoutSize(width: width, height: height)
+        return self
+    }
+
+    @discardableResult
     public func maxLayoutSize(_ maxLayoutSize: ASLayoutSize) -> Self {
         self.maxLayoutSize = maxLayoutSize
+        return self
+    }
+    @discardableResult
+    public func maxLayoutSize(width: ASDimension, height: ASDimension) -> Self {
+        self.maxLayoutSize = ASLayoutSize(width: width, height: height)
         return self
     }
 }
@@ -79,17 +113,13 @@ extension ASLayoutElementStyle {
 // MARK:
 public extension ASStackLayoutElement {
     @discardableResult
-    public func spacingBefore(_ spacingBefore: CGFloat) -> Self {
-        self.spacingBefore = spacingBefore
+    public func spacing(by: CGFloat) -> Self {
+        spacingBefore = by
+        spacingAfter = by
         return self
     }
     @discardableResult
-    public func spacingAfter(_ spacingAfter: CGFloat) -> Self {
-        self.spacingAfter = spacingAfter
-        return self
-    }
-    @discardableResult
-    public func spacing(_ before: CGFloat, _ after: CGFloat) -> Self {
+    public func spacing(before: CGFloat = 0.0, after: CGFloat = 0.0) -> Self {
         spacingBefore = before
         spacingAfter = after
         return self
@@ -142,6 +172,7 @@ public extension ASAbsoluteLayoutElement {
 }
 
 // MARK:
+// *Note: When use factory methods below, always call e.g. ASInsetLayoutSpec.insets(.zero) before .child => ASInsetLayoutSpec.insets(.zero).child(child)
 public extension ASLayoutSpec {
     @discardableResult
     public func child(_ child: ASLayoutElement) -> Self {
@@ -162,6 +193,10 @@ public extension ASLayoutSpec {
 
 // MARK:
 public extension ASAbsoluteLayoutSpec {
+    public class func sizing(_ sizing: ASAbsoluteLayoutSpecSizing) -> ASAbsoluteLayoutSpec {
+        return ASAbsoluteLayoutSpec().sizing(sizing)
+    }
+    
     @discardableResult
     public func sizing(_ sizing: ASAbsoluteLayoutSpecSizing) -> Self {
         self.sizing = sizing
@@ -170,9 +205,16 @@ public extension ASAbsoluteLayoutSpec {
 }
 
 // MARK:
+// *Note: Don't use ASInsetLayoutSpec.insets(), use ASInsetLayoutSpec.insets(.zero) instead
 public extension ASInsetLayoutSpec {
     public class func insets(_ insets: UIEdgeInsets) -> ASInsetLayoutSpec {
         return ASInsetLayoutSpec().insets(insets)
+    }
+    public class func insets(top: CGFloat = 0.0, left: CGFloat = 0.0, bottom: CGFloat = 0.0, right: CGFloat = 0.0) -> ASInsetLayoutSpec {
+        return ASInsetLayoutSpec().insets(UIEdgeInsets(top: top, left: left, bottom: bottom, right: right))
+    }
+    public class func insets(vertical: CGFloat = 0.0, horizontal: CGFloat = 0.0) -> ASInsetLayoutSpec {
+        return ASInsetLayoutSpec().insets(UIEdgeInsets(top: vertical, left: horizontal, bottom: vertical, right: horizontal))
     }
     
     @discardableResult
@@ -180,10 +222,24 @@ public extension ASInsetLayoutSpec {
         self.insets = insets
         return self
     }
+    @discardableResult
+    public func insets(top: CGFloat = 0.0, left: CGFloat = 0.0, bottom: CGFloat = 0.0, right: CGFloat = 0.0) -> Self {
+        self.insets = UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
+        return self
+    }
+    @discardableResult
+    public func insets(vertical: CGFloat = 0.0, horizontal: CGFloat = 0.0) -> Self {
+        self.insets = UIEdgeInsets(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
+        return self
+    }
 }
 
 // MARK:
 public extension ASBackgroundLayoutSpec {
+    public class func background(_ background: ASLayoutElement) -> ASBackgroundLayoutSpec {
+        return ASBackgroundLayoutSpec().background(background)
+    }
+    
     @discardableResult
     public func background(_ background: ASLayoutElement) -> Self {
         self.background = background
@@ -193,6 +249,10 @@ public extension ASBackgroundLayoutSpec {
 
 // MARK:
 public extension ASOverlayLayoutSpec {
+    public class func overlay(_ overlay: ASLayoutElement) -> ASOverlayLayoutSpec {
+        return ASOverlayLayoutSpec().overlay(overlay)
+    }
+
     @discardableResult
     public func overlay(_ overlay: ASLayoutElement) -> Self {
         self.overlay = overlay
@@ -202,6 +262,10 @@ public extension ASOverlayLayoutSpec {
 
 // MARK:
 public extension ASRatioLayoutSpec {
+    public class func ratio(_ ratio: CGFloat) -> ASRatioLayoutSpec {
+        return ASRatioLayoutSpec().ratio(ratio)
+    }
+    
     @discardableResult
     public func ratio(_ ratio: CGFloat) -> Self {
         self.ratio = ratio
@@ -211,31 +275,90 @@ public extension ASRatioLayoutSpec {
 
 // MARK:
 public extension ASRelativeLayoutSpec {
+    // *Note: Use some offers below or consider ASCenterLayoutSpec for short but limited
+    public class func center(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+                    .vertical(.center)
+                    .horizontal(.center)
+                    .sizing(sizing)
+    }
+    public class func start(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.center)
+            .horizontal(.start)
+            .sizing(sizing)
+    }
+    public class func topStart(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.start)
+            .horizontal(.start)
+            .sizing(sizing)
+    }
+    public class func top(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.start)
+            .horizontal(.center)
+            .sizing(sizing)
+    }
+    public class func topEnd(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.start)
+            .horizontal(.end)
+            .sizing(sizing)
+    }
+    public class func end(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.center)
+            .horizontal(.end)
+            .sizing(sizing)
+    }
+    public class func bottomEnd(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.end)
+            .horizontal(.end)
+            .sizing(sizing)
+    }
+    public class func bottom(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.end)
+            .horizontal(.center)
+            .sizing(sizing)
+    }
+    public class func bottomStart(sizing: ASRelativeLayoutSpecSizingOption = []) -> ASRelativeLayoutSpec {
+        return ASRelativeLayoutSpec()
+            .vertical(.end)
+            .horizontal(.start)
+            .sizing(sizing)
+    }
+    
     @discardableResult
-    public func horizontalPosition(_ horizontalPosition: ASRelativeLayoutSpecPosition) -> Self {
-        self.horizontalPosition = horizontalPosition
+    public func horizontal(_ position: ASRelativeLayoutSpecPosition) -> Self {
+        self.horizontalPosition = position
         return self
     }
     @discardableResult
-    public func verticalPosition(_ verticalPosition: ASRelativeLayoutSpecPosition) -> Self {
-        self.verticalPosition = verticalPosition
+    public func vertical(_ position: ASRelativeLayoutSpecPosition) -> Self {
+        self.verticalPosition = position
         return self
     }
     @discardableResult
-    public func sizingOption(_ sizingOption: ASRelativeLayoutSpecSizingOption) -> Self {
+    public func sizing(_ sizingOption: ASRelativeLayoutSpecSizingOption) -> Self {
         self.sizingOption = sizingOption
         return self
-    }    
+    }
 }
 
 // MARK:
 public extension ASCenterLayoutSpec {
+    // ~ ASRelativeLayoutSpec.top
     public class func centerX() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.X)
     }
+    // ~ ASRelativeLayoutSpec.start
     public class func centerY() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.Y)
     }
+    // ~ ASRelativeLayoutSpec.center
     public class func centerXY() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.XY)
     }
