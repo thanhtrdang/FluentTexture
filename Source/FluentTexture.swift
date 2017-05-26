@@ -169,11 +169,22 @@ public extension ASAbsoluteLayoutElement {
         self.layoutPosition = layoutPosition
         return self
     }
+    
+    @discardableResult
+    public func layoutPosition(x: CGFloat, y: CGFloat) -> Self {
+        self.layoutPosition = CGPoint(x: x, y: y)
+        return self
+    }
 }
 
 // MARK:
 // *Note: When use factory methods below, always call e.g. ASInsetLayoutSpec.insets(.zero) before .child => ASInsetLayoutSpec.insets(.zero).child(child)
 public extension ASLayoutSpec {
+    public convenience init(_ children: ASLayoutElement...) {
+        self.init()
+        self.children = children
+    }
+    
     @discardableResult
     public func child(_ child: ASLayoutElement) -> Self {
         self.child = child
@@ -193,10 +204,73 @@ public extension ASLayoutSpec {
 
 // MARK:
 public extension ASAbsoluteLayoutSpec {
+    public class func frame(_ children: [(element: ASLayoutElement, frame: (CGFloat, CGFloat, CGFloat, CGFloat))]) -> ASAbsoluteLayoutSpec {
+        return ASAbsoluteLayoutSpec().frame(children)
+    }
+    public class func frame(_ children: [(element: ASLayoutElement, frame: CGRect)]) -> ASAbsoluteLayoutSpec {
+        return ASAbsoluteLayoutSpec().frame(children)
+    }
+
     public class func sizing(_ sizing: ASAbsoluteLayoutSpecSizing) -> ASAbsoluteLayoutSpec {
         return ASAbsoluteLayoutSpec().sizing(sizing)
     }
     
+    /* (CGFloat, CGFloat, CGFloat, CGFloat) ~ CGRect
+     e.g. ASAbsoluteLayoutSpec()
+        .frame([
+            (blueNode, (x: 0, y: 0, width: 49, height: 30)),
+            (purpuleNode, (x: 0, y: 0, width: 49, height: 30)),
+            (greenNode, (x: 0, y: 0, width: 49, height: 30))
+        ])
+    */
+    @discardableResult
+    public func frame(_ children: [(element: ASLayoutElement, frame: (CGFloat, CGFloat, CGFloat, CGFloat))]) -> Self {
+        return frame(children.map { (element, frame) ->  (ASLayoutElement, CGRect) in
+            return (element, CGRect(x: frame.0, y: frame.1, width: frame.2, height: frame.3))
+        })
+    }
+    
+    @discardableResult
+    public func frame(_ children: [(element: ASLayoutElement, frame: CGRect)]) -> Self {
+        var framedChildren: [ASLayoutElement] = []
+        
+        children.forEach { (element, frame) in
+            element.style
+                .layoutPosition(frame.origin)
+                .preferredSize(frame.size)
+            
+            framedChildren.append(element)
+        }
+        
+        self.children = framedChildren
+        
+        return self
+    }
+    
+    public func position(_ children: [(element: ASLayoutElement, position: (CGFloat, CGFloat))]) -> Self {
+        return position(children.map { (element, position) ->  (element: ASLayoutElement, position: CGPoint) in
+            return (element, CGPoint(x: position.0, y: position.1))
+        })
+    }
+    
+    //TODO: Implement later
+    public func position(_ children: [(element: ASLayoutElement, position: CGPoint)]) -> Self {
+        
+        return self
+    }
+    
+    public func size(_ children: [(element: ASLayoutElement, size: (CGFloat, CGFloat))]) -> Self {
+        return size(children.map { (element, size) -> (element: ASLayoutElement, size: CGSize) in
+            return (element, CGSize(width: size.0, height: size.1))
+        })
+    }
+
+    //TODO: Implement later
+    public func size(_ children: [(element: ASLayoutElement, size: CGSize)]) -> Self {
+        
+        return self
+    }
+
     @discardableResult
     public func sizing(_ sizing: ASAbsoluteLayoutSpecSizing) -> Self {
         self.sizing = sizing
@@ -354,29 +428,73 @@ public extension ASCenterLayoutSpec {
     public class func centerX() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.X)
     }
+    public class func centerX(_ child: ASLayoutElement) -> ASCenterLayoutSpec {
+        return ASCenterLayoutSpec().centeringOptions(.X).child(child)
+    }
+    public func centerX() -> Self {
+        return centeringOptions(.X)
+    }
+
     // ~ ASRelativeLayoutSpec.start
     public class func centerY() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.Y)
     }
+    public class func centerY(_ child: ASLayoutElement) -> ASCenterLayoutSpec {
+        return ASCenterLayoutSpec().centeringOptions(.Y).child(child)
+    }
+    public func centerY() -> Self {
+        return centeringOptions(.Y)
+    }
+
     // ~ ASRelativeLayoutSpec.center
     public class func centerXY() -> ASCenterLayoutSpec {
         return ASCenterLayoutSpec().centeringOptions(.XY)
     }
-    
+    public class func centerXY(_ child: ASLayoutElement) -> ASCenterLayoutSpec {
+        return ASCenterLayoutSpec().centeringOptions(.XY).child(child)
+    }
+    public func centerXY() -> Self {
+        return centeringOptions(.XY)
+    }
+
     @discardableResult
     public func centeringOptions(_ centeringOptions: ASCenterLayoutSpecCenteringOptions) -> Self {
         self.centeringOptions = centeringOptions
         return self
     }
+    
     @discardableResult
     public func sizingOptions(_ sizingOptions: ASCenterLayoutSpecSizingOptions) -> Self {
         self.sizingOptions = sizingOptions
         return self
     }
+    public func sizeX() -> Self {
+        return sizingOptions(.minimumX)
+    }
+    public func sizeY() -> Self {
+        return sizingOptions(.minimumY)
+    }
+    public func sizeXY() -> Self {
+        return sizingOptions(.minimumXY)
+    }
+
 }
 
 // MARK:
 public extension ASStackLayoutSpec {
+    public class func vertical(_ children: [ASLayoutElement]) -> ASStackLayoutSpec {
+        return ASStackLayoutSpec.vertical().children(children)
+    }
+    public class func vertical(_ children: ASLayoutElement...) -> ASStackLayoutSpec {
+        return ASStackLayoutSpec.vertical().children(children)
+    }
+    public class func horizontal(_ children: [ASLayoutElement]) -> ASStackLayoutSpec {
+        return ASStackLayoutSpec.horizontal().children(children)
+    }
+    public class func horizontal(_ children: ASLayoutElement...) -> ASStackLayoutSpec {
+        return ASStackLayoutSpec.horizontal().children(children)
+    }
+    
     @discardableResult
     public func direction(_ direction: ASStackLayoutDirection) -> Self {
         self.direction = direction

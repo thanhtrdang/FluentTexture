@@ -143,14 +143,12 @@ class Hero1Node: HeroNode {
             .preferredSize(width: 80, height: 80)
         
         let stackLayoutSpec = ASStackLayoutSpec
-            .horizontal()
+            .horizontal(blueNode, purpleNode, greenNode)
             .spacing(10)
-            .children(blueNode, purpleNode, greenNode)
         
         let centerLayoutSpec = ASCenterLayoutSpec
-            .centerXY()
+            .centerXY(stackLayoutSpec)
             .sizingOptions(.minimumXY)
-            .child(stackLayoutSpec)
         
         return centerLayoutSpec
     }
@@ -166,19 +164,15 @@ class Hero2Node: HeroNode {
             .preferredSize(width: 140, height: 80)
         
         let stackLayoutSpec = ASStackLayoutSpec
-            .vertical()
+            .vertical(blueNode, purpleNode, greenNode)
             .spacing(10)
-            .children(blueNode, purpleNode, greenNode)
         
-        let insetLayoutSpec = ASInsetLayoutSpec
+        let insetLayoutSpec = ASInsetLayoutSpec(stackLayoutSpec)
             .insets(left: 50)
-            .insets(.zero)
-            .child(stackLayoutSpec)
         
-        let centerLayoutSpec = ASCenterLayoutSpec
+        let centerLayoutSpec = ASCenterLayoutSpec(insetLayoutSpec)
             .centerXY()
-            .sizingOptions(.minimumXY)
-            .child(insetLayoutSpec)
+            .sizeXY()
         
         return centerLayoutSpec
     }
